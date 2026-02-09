@@ -20,3 +20,7 @@
 ```bash
 node -v
 npm -v
+
+Запустить:
+npm install
+npm run dev
