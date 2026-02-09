@@ -1,10 +1,87 @@
-import { useState } from "react";
 import { Input } from "./FormFields";
 import { PasswordInput } from "./PasswordInput";
+import { useState, useRef, useEffect } from "react";
+
+
+
+
+export function MonthDropdown({ value, onChange, months }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  const label = value ? months[Number(value) - 1] : "Выбери месяц";
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onDown = (e) => {
+      const el = wrapRef.current;
+      if (!el) return;
+      if (!el.contains(e.target)) setOpen(false);
+    };
+
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onDown, true);
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const pick = (v) => {
+    onChange?.(v);
+    setOpen(false);
+  };
+
+  return (
+    <div className="monthWrap" ref={wrapRef}>
+      <button
+        type="button"
+        className="monthBtn"
+        onClick={() => setOpen((s) => !s)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span>{label}</span>
+        <span className={"chev " + (open ? "up" : "")}>▾</span>
+      </button>
+
+      {open && (
+        <div className="monthMenu" role="listbox">
+          {months.map((m, i) => {
+            const v = String(i + 1);
+            const active = v === String(value || "");
+            return (
+              <button
+                key={m}
+                type="button"
+                className={"monthItem " + (active ? "active" : "")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  pick(v);
+                }}
+              >
+                {m}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 
 export function AuthModal({ open, view, onClose, onSwitch }) {
   const [loginForm, setLoginForm] = useState({ identity: "", password: "" });
   const [regForm, setRegForm] = useState({
+
     phone: "",
     email: "",
     password: "",
@@ -12,6 +89,13 @@ export function AuthModal({ open, view, onClose, onSwitch }) {
     birthDay: "",
     birthMonth: "",
   });
+
+  useEffect(() => {
+    if (open) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => (document.body.style.overflow = "");
+  }, [open]);
+
 
   if (!open) return null;
   const close = () => onClose?.();
@@ -142,20 +226,13 @@ export function AuthModal({ open, view, onClose, onSwitch }) {
                 </label>
                 <label className="field">
                   <span className="fieldLabel">Месяц рождения</span>
-                  <select
-                    className="input"
+
+                  <MonthDropdown
                     value={regForm.birthMonth}
-                    onChange={(e) =>
-                      setRegForm((s) => ({ ...s, birthMonth: e.target.value }))
-                    }
-                  >
-                    <option value="">Выбери месяц</option>
-                    {MONTHS_RU.map((m, i) => (
-                      <option key={m} value={String(i + 1)}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(v) => setRegForm((s) => ({ ...s, birthMonth: v }))}
+                    months={MONTHS_RU}
+                  />
+
                 </label>
               </div>
               <button className="btn primary" type="submit">
