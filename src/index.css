@@ -249,7 +249,8 @@ body {
 body {
   top: 0 !important;
 }
-.aiFab{
+
+.aiFab {
   position: fixed;
   right: 20px;
   bottom: 20px;
@@ -263,10 +264,10 @@ body {
   cursor: pointer;
 
   font-size: 22px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
 }
 
-.aiPanel{
+.aiPanel {
   position: fixed;
   right: 20px;
   bottom: 90px;
@@ -274,4 +275,30 @@ body {
   max-width: calc(100vw - 40px);
   height: 460px;
   z-index: 9999;
+}
+
+:root {
+  --font-base: "Inter Tight", sans-serif;
+}
+
+body {
+  font-family: var(--font-base);
+}
+
+.h1, .h2, .h3 {
+  font-family: var(--font-base);
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+body, p, button, input, select, textarea {
+  font-family: var(--font-base);
+  font-weight: 400;
+}
+
+.navLink, .langTrigger {
+  font-weight: 500;
 }
